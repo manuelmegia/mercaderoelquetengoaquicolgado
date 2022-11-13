@@ -3,8 +3,8 @@ import kotlin.collections.HashMap
 
 fun main(args: Array<String>) {
     var listaArticulos = mutableListOf<Articulo>(
-        Articulo(20, 10000),
         Articulo(4, 45),
+        Articulo(40, 45000000),
         Articulo(6, 30),
         Articulo(4, 50),
         Articulo(5, 10),
@@ -12,6 +12,7 @@ fun main(args: Array<String>) {
     )
     var artsMercaderes = mutableListOf<Articulo>()
     var mochilaJ = Mochila(listaArticulos)
+    mochilaJ.lista.sort()
     println(mochilaJ.W)
     mochilaJ.dentroM()
     var mochilaJa = Mochila(artsMercaderes)/*
@@ -21,6 +22,7 @@ fun main(args: Array<String>) {
     var vendedor = Mago("Vendedor", Estado_vital.ANCIANO, Raza.ENANO, mochilaJ)
     var comprador = Mercader("Comprador", Estado_vital.ANCIANO, Raza.ENANO, mochilaJa)
     println(vendedor.mochila)
+    println(comprador.mochila)
     comprador.vender(vendedor, comprador, 0)
     println(vendedor.dinero)/*
     while (true) {
@@ -156,38 +158,36 @@ class Mercader(nombre: String, edad: Estado_vital, raza: Raza, mochila: Mochila)
             var valor = vendedor.mochila.lista[nObjeto].valor
             comprador.mochila.lista.add(vendedor.mochila.lista[nObjeto])
             vendedor.mochila.lista.removeAt(nObjeto)
-            println(valor)/*if (valor > 0) {
+            println(valor)
+
+            while (valor > 0) {
                 while (valor >= 100) {
-                    valor - 100
+                    valor -= 100
                     vendedor.dinero[100] = +1
                 }
                 while (valor >= 25) {
-                    valor - 25
+                    valor -= 25
                     vendedor.dinero[25] = +1
                 }
                 while (valor >= 10) {
-                    valor - 10
+                    valor -= 10
                     vendedor.dinero[10] = +1
                 }
                 while (valor >= 5) {
-                    valor - 5
+                    valor -= 5
                     vendedor.dinero[5] = +1
                 }
                 while (valor >= 1) {
-                    valor - 1
+                    valor -= 1
                     vendedor.dinero[1] = +1
                 }
                 println(valor)
-            }*/
+            }
+
             println("Objeto eliminado con exito")
-            println(valor)
             println(vendedor.mochila.lista)
             println(comprador.mochila.lista)
         }
-    }
-
-    fun calcularMonedero(precio: Int) {
-
     }
 }
 
@@ -196,11 +196,14 @@ class Mochila(var lista: MutableList<Articulo>) {
     var W = Random().nextInt(1, 6) * 10
 
     fun dentroM(): MutableList<Articulo> {
-        lista.sort()
         val result = mutableListOf<Articulo>()
         var suma = 0
         while (suma < W) {
-            val el = lista.removeFirstOrNull()
+            var el = lista.removeFirstOrNull()
+            if (el != null && suma + el.peso > W && lista.size > 0){
+                lista.add(el)
+                el = lista[1]
+            }
             if (el == null || suma + el.peso > W) break
             result.add(el)
             suma += el.peso
