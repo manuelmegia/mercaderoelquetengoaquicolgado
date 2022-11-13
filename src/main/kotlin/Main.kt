@@ -2,102 +2,135 @@ import java.util.*
 import kotlin.collections.HashMap
 
 fun main(args: Array<String>) {
-    elegirRuta()
+    var aventura1 = Aventura()
+    aventura1.elegirRuta()
 }
 
+class Aventura {
 
-fun elegirRuta() {
-    println(
-        "Elige lo que quieres probar respecto al programa" + "\n1. Ver una prueba de que la conversación funciona sin meter parámetros" + "\n2. Ver una prueba de que el intercambio funciona sin meter parámetros" + "\n3. Ver una prueba de que el intercambio funciona metiendo parámetros"
-    )
-    var elecc = readln()
-    if (elecc == "1") demostracionConversacion()
-    else if (elecc == "2") demostracionIntercambios()
-    else if (elecc == "3") menuCompleto()
-}
-
-fun menuCompleto() {
     var listaArticulos = mutableListOf<Articulo>(
         Articulo(4, 45), Articulo(40, 45286457), Articulo(6, 30), Articulo(4, 50), Articulo(5, 10), Articulo(2, 40)
     )
-    var listaArticulosM = mutableListOf<Articulo>()
-    var listaJugadores = mutableListOf<Persona>()
-    while (true) {
-        println("¿Quieres crear un nuevo personaje\n1. Si   2.No?")
+    fun elegirRuta() {
+        println(
+            "Elige lo que quieres probar respecto al programa" + "\n1. Ver una prueba de que la conversación funciona sin meter parámetros" + "\n2. Ver una prueba de que el intercambio funciona sin meter parámetros" + "\n3. Ver una prueba de que el intercambio funciona metiendo parámetros"
+        )
         var elecc = readln()
-        if (elecc == "1") crearPersonaje(listaJugadores, listaArticulos, listaArticulosM)
-        else if (elecc == "2") break
+        if (elecc == "1") demostracionConversacion()
+        else if (elecc == "2") demostracionIntercambios()
+        else if (elecc == "3") menuCompleto()
     }
-    println("¿Que personaje vende algo?")
-    var eleccV = readln()
-    println("¿A que mercader?")
-    var eleccC = readln()
-    println("¿Que nº de objeto de tu inventario?")
-    var nObjeto = readln()
-    listaJugadores[eleccC.toInt()].vender(listaJugadores[eleccV.toInt()], listaJugadores[eleccC.toInt()], nObjeto.toInt())
-    println(listaJugadores[eleccV.toInt()].dinero)
-}
 
-fun demostracionConversacion() {
-    var mochilaJ = Mochila(mutableListOf())
-    var Jack = Berserker("Jack", Estado_vital.ANCIANO, Raza.ENANO, mochilaJ)
-    while (true) {
-        println("Pregunta algo, si quieres parar escribe 1")
-        var pregunta = readln()
-        if (pregunta == "1") break
-        Jack.pregunta(pregunta)
+    fun menuCompleto() {
+        var listaArticulosM = mutableListOf<Articulo>()
+        var listaJugadores = mutableListOf<Persona>()
+        while (true) {
+            println("¿Quieres crear un nuevo personaje\n1. Si   2.No?")
+            var elecc = readln()
+            if (elecc == "1") crearPersonaje(listaJugadores, listaArticulos, listaArticulosM)
+            else if (elecc == "2") break
+        }
+        while (true) {
+            println(
+                "¿Que quieres hacer" +
+                        "\n1. Tener una conversación" +
+                        "\n2. Vender algo" +
+                        "\n3. Acabar el programa"
+            )
+            var elecc = readln()
+            if (elecc == "1") conversar(listaJugadores)
+            else if (elecc == "2") venderAlgo(listaJugadores)
+            else if (elecc == "3") break
+        }
     }
-}
 
-fun demostracionIntercambios() {
-    var listaArticulos = mutableListOf<Articulo>(
-        Articulo(4, 45), Articulo(40, 45286457), Articulo(6, 30), Articulo(4, 50), Articulo(5, 10), Articulo(2, 40)
-    )
-    var artsMercaderes = mutableListOf<Articulo>()
-    var mochilaJ = Mochila(listaArticulos)
-    mochilaJ.lista.sort()
-    println("Tamaño de la mochila del aventurero: ${mochilaJ.W}")
-    mochilaJ.dentroM()
-    var mochilaJM = Mochila(artsMercaderes)
-    var vendedor = Mago("Vendedor", Estado_vital.ANCIANO, Raza.ENANO, mochilaJ)
-    var comprador = Mercader("Comprador", Estado_vital.ANCIANO, Raza.ENANO, mochilaJM)
-    println("Mochila del personaje no mercader: ${vendedor.mochila}")
-    println("Mochila del personaje mercader: ${comprador.mochila}")
-    //numero de objeto en tu inventario a vender
-    comprador.vender(vendedor, comprador, 0)
-    println("Monedero del vendedor: ${vendedor.dinero}")
-}
+    fun conversar(listaJugadores: MutableList<Persona>){
+        println("¿Con que jugador quieres conversar?")
+        var eleccJug = readln()
+        while (true) {
+            println("Pregunta algo, si quieres parar escribe 1")
+            var pregunta = readln()
+            if (pregunta == "1") break
+            listaJugadores[eleccJug.toInt()].pregunta(pregunta)
+        }
+    }
 
-fun crearPersonaje(
-    listaJug: MutableList<Persona>, listaArticulos: MutableList<Articulo>, artsMercaderes: MutableList<Articulo>
-): MutableList<Persona> {
-    var mochilaJ = Mochila(listaArticulos)
-    var mochilaJM = Mochila(artsMercaderes)
-    mochilaJ.lista.sort()
-    mochilaJ.dentroM()
-    var eve = Estado_vital.ADULTO
-    var ra = Raza.ENANO
-    println("¿Como te llamas?")
-    var nombre = readln()
-    println("¿En que estado vital te encuentras?\n1.Joven   2. Adulto   3.Anciano")
-    var ev = readln()
-    if (ev == "1") eve = Estado_vital.JOVEN
-    else if (ev == "2") eve = Estado_vital.ADULTO
-    else if (ev == "3") eve = Estado_vital.ANCIANO
-    println("¿A que raza perteneces?\n1.Enano   2.Elfo  3.Humano    4.Goblin")
-    var raza = readln()
-    if (raza == "1") ra = Raza.ENANO
-    else if (raza == "2") ra = Raza.ELFO
-    else if (raza == "3") ra = Raza.HUMANO
-    else if (raza == "4") ra = Raza.GOBLIN
-    println("¿Que clase eres?\n1.Mago   2.Guerrero  3.Berserker 4.Ladron 5.Mercader")
-    var clase = readln()
-    if (clase == "1") listaJug.add(Mago(nombre, eve, ra, mochilaJ))
-    else if (clase == "2") listaJug.add(Guerrero(nombre, eve, ra, mochilaJ))
-    else if (clase == "3") listaJug.add(Berserker(nombre, eve, ra, mochilaJ))
-    else if (clase == "4") listaJug.add(Ladron(nombre, eve, ra, mochilaJ))
-    else if (clase == "5") listaJug.add(Mercader(nombre, eve, ra, mochilaJM))
-    return listaJug
+    fun venderAlgo(listaJugadores: MutableList<Persona>) {
+        println("¿Que personaje vende algo?")
+        var eleccV = readln()
+        println("¿A que mercader?")
+        var eleccC = readln()
+        println("¿Que nº de objeto de tu inventario?")
+        var nObjeto = readln()
+        try {
+            listaJugadores[eleccC.toInt()].vender(
+                listaJugadores[eleccV.toInt()],
+                listaJugadores[eleccC.toInt()] as Mercader, nObjeto.toInt()
+            )
+            println(listaJugadores[eleccV.toInt()].dinero)
+        } catch (e: Exception) {
+            println("Tiene que ser de persona a mercader")
+        }
+    }
+
+    fun demostracionConversacion() {
+        var mochilaJ = Mochila(mutableListOf())
+        var Jack = Berserker("Jack", Estado_vital.ANCIANO, Raza.ENANO, mochilaJ)
+        while (true) {
+            println("Pregunta algo, si quieres parar escribe 1")
+            var pregunta = readln()
+            if (pregunta == "1") break
+            Jack.pregunta(pregunta)
+        }
+    }
+
+    fun demostracionIntercambios() {
+        var artsMercaderes = mutableListOf<Articulo>()
+        var mochilaJ = Mochila(listaArticulos)
+        mochilaJ.lista.sort()
+        println("Tamaño de la mochila del aventurero: ${mochilaJ.W}")
+        mochilaJ.dentroM()
+        var mochilaJM = Mochila(artsMercaderes)
+        var vendedor = Mago("Vendedor", Estado_vital.ANCIANO, Raza.ENANO, mochilaJ)
+        var comprador = Mercader("Comprador", Estado_vital.ANCIANO, Raza.ENANO, mochilaJM)
+        println("Mochila del personaje no mercader: ${vendedor.mochila}")
+        println("Mochila del personaje mercader: ${comprador.mochila}")
+        //numero de objeto en tu inventario a vender
+        comprador.vender(vendedor, comprador, 0)
+        println("Monedero del vendedor: ${vendedor.dinero}")
+    }
+
+    fun crearPersonaje(
+        listaJug: MutableList<Persona>, listaArticulos: MutableList<Articulo>, artsMercaderes: MutableList<Articulo>
+    ): MutableList<Persona> {
+        var mochilaJ = Mochila(listaArticulos)
+        var mochilaJM = Mochila(artsMercaderes)
+        mochilaJ.lista.sort()
+        mochilaJ.dentroM()
+        var eve = Estado_vital.ADULTO
+        var ra = Raza.ENANO
+        println("¿Como te llamas?")
+        var nombre = readln()
+        println("¿En que estado vital te encuentras?\n1.Joven   2. Adulto   3.Anciano")
+        var ev = readln()
+        if (ev == "1") eve = Estado_vital.JOVEN
+        else if (ev == "2") eve = Estado_vital.ADULTO
+        else if (ev == "3") eve = Estado_vital.ANCIANO
+        println("¿A que raza perteneces?\n1.Enano   2.Elfo  3.Humano    4.Goblin")
+        var raza = readln()
+        if (raza == "1") ra = Raza.ENANO
+        else if (raza == "2") ra = Raza.ELFO
+        else if (raza == "3") ra = Raza.HUMANO
+        else if (raza == "4") ra = Raza.GOBLIN
+        println("¿Que clase eres?\n1.Mago   2.Guerrero  3.Berserker 4.Ladron 5.Mercader")
+        var clase = readln()
+        if (clase == "1") listaJug.add(Mago(nombre, eve, ra, mochilaJ))
+        else if (clase == "2") listaJug.add(Guerrero(nombre, eve, ra, mochilaJ))
+        else if (clase == "3") listaJug.add(Berserker(nombre, eve, ra, mochilaJ))
+        else if (clase == "4") listaJug.add(Ladron(nombre, eve, ra, mochilaJ))
+        else if (clase == "5") listaJug.add(Mercader(nombre, eve, ra, mochilaJM))
+        return listaJug
+    }
 }
 
 open class Persona(
@@ -161,7 +194,7 @@ open class Persona(
         }
     }
 
-    open fun vender(persona: Persona, persona1: Persona, i: Int) {
+    open fun vender(persona: Persona, persona1: Mercader, i: Int) {
         println("Debe ser un jugador con un mercader")
     }
 }
@@ -194,7 +227,7 @@ class Ladron(nombre: String, edad: Estado_vital, raza: Raza, mochila: Mochila) :
 class Mercader(nombre: String, edad: Estado_vital, raza: Raza, mochila: Mochila) :
     Persona(nombre, edad, raza, mochila) {
 
-    fun vender(vendedor: Persona, comprador: Mercader, nObjeto: Int) {
+    override fun vender(vendedor: Persona, comprador: Mercader, nObjeto: Int) {
         if (vendedor.mochila.lista.size < nObjeto) println("No tienes este objeto")
         else {
             var valor = vendedor.mochila.lista[nObjeto].valor
