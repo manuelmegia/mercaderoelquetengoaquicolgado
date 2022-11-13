@@ -159,27 +159,36 @@ class Mercader(nombre: String, edad: Estado_vital, raza: Raza, mochila: Mochila)
             comprador.mochila.lista.add(vendedor.mochila.lista[nObjeto])
             vendedor.mochila.lista.removeAt(nObjeto)
             println(valor)
-
+            var cont = 0
             while (valor > 0) {
                 while (valor >= 100) {
+                    cont++
                     valor -= 100
-                    vendedor.dinero[100] = +1
+                    vendedor.dinero[100] = cont
                 }
+                cont = 0
                 while (valor >= 25) {
+                    cont++
                     valor -= 25
-                    vendedor.dinero[25] = +1
+                    vendedor.dinero[25] = cont
                 }
+                cont = 0
                 while (valor >= 10) {
+                    cont++
                     valor -= 10
-                    vendedor.dinero[10] = +1
+                    vendedor.dinero[10] = cont
                 }
+                cont = 0
                 while (valor >= 5) {
+                    cont++
                     valor -= 5
-                    vendedor.dinero[5] = +1
+                    vendedor.dinero[5] = cont
                 }
+                cont = 0
                 while (valor >= 1) {
+                    cont++
                     valor -= 1
-                    vendedor.dinero[1] = +1
+                    vendedor.dinero[1] = cont
                 }
                 println(valor)
             }
