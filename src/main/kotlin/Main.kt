@@ -1,21 +1,28 @@
 import java.util.*
+import kotlin.collections.HashMap
 
 fun main(args: Array<String>) {
-    var listaArt = mutableListOf(Articulo(4, 40), Articulo(6, 30), Articulo(4, 50), Articulo(5, 10), Articulo(2, 40))
-    var mochilaJ = Mochila(listaArt)
+    var listaArticulos = mutableListOf<Articulo>(
+        Articulo(20, 10000),
+        Articulo(4, 45),
+        Articulo(6, 30),
+        Articulo(4, 50),
+        Articulo(5, 10),
+        Articulo(2, 40)
+    )
+    var artsMercaderes = mutableListOf<Articulo>()
+    var mochilaJ = Mochila(listaArticulos)
+    println(mochilaJ.W)
     mochilaJ.dentroM()
-    var mochilaJa = Mochila(listaArt)
-    mochilaJa.dentroM()
-    /*
+    var mochilaJa = Mochila(artsMercaderes)/*
         var listaJugadores = mutableListOf<Persona>()
         crearPersonaje(listaJugadores, listaArt)
     */
     var vendedor = Mago("Vendedor", Estado_vital.ANCIANO, Raza.ENANO, mochilaJ)
     var comprador = Mercader("Comprador", Estado_vital.ANCIANO, Raza.ENANO, mochilaJa)
-    comprador.vender(vendedor, comprador)
     println(vendedor.mochila)
-    println(comprador.mochila)
-    /*
+    comprador.vender(vendedor, comprador, 0)
+    println(vendedor.dinero)/*
     while (true) {
         println("Pregunta algo, si quieres parar escribe 1")
         var pregunta = readln()
@@ -58,7 +65,7 @@ open class Persona(
     var edad: Estado_vital,
     var raza: Raza,
     var mochila: Mochila,
-    var dinero: Int = 0,
+    var dinero: HashMap<Int, Int> = hashMapOf(1 to 0, 5 to 0, 10 to 0, 25 to 0, 100 to 0),
     var partidas_jugadas: Int = 0,
     var horas: Int = 0,
     var kills: Int = 0,
@@ -66,6 +73,7 @@ open class Persona(
     var assists: Int = 0,
     var kd: Float = kills.toFloat() / deaths.toFloat()
 ) {
+
     open fun idioma(respuesta: String) {
         when (this.raza) {
             Raza.GOBLIN -> println(respuesta.rot13cifrado(13))
@@ -131,22 +139,63 @@ fun String.rot13cifrado(tamañoRot: Int) = map {
 
 class Mago(nombre: String, edad: Estado_vital, raza: Raza, mochila: Mochila) : Persona(nombre, edad, raza, mochila) {}
 
-class Berserker(nombre: String, edad: Estado_vital, raza: Raza, mochila: Mochila) : Persona(nombre, edad, raza, mochila) {}
+class Berserker(nombre: String, edad: Estado_vital, raza: Raza, mochila: Mochila) :
+    Persona(nombre, edad, raza, mochila) {}
 
-class Guerrero(nombre: String, edad: Estado_vital, raza: Raza, mochila: Mochila) : Persona(nombre, edad, raza, mochila) {}
+class Guerrero(nombre: String, edad: Estado_vital, raza: Raza, mochila: Mochila) :
+    Persona(nombre, edad, raza, mochila) {}
 
 class Ladron(nombre: String, edad: Estado_vital, raza: Raza, mochila: Mochila) : Persona(nombre, edad, raza, mochila) {}
 
-class Mercader(nombre: String, edad: Estado_vital, raza: Raza, mochila: Mochila) : Persona(nombre, edad, raza, mochila) {
-    fun vender(vendedor: Persona, comprador: Mercader){
-        println(vendedor.mochila.lista[1])
+class Mercader(nombre: String, edad: Estado_vital, raza: Raza, mochila: Mochila) :
+    Persona(nombre, edad, raza, mochila) {
+
+    fun vender(vendedor: Persona, comprador: Mercader, nObjeto: Int) {
+        if (vendedor.mochila.lista.size < nObjeto) println("No tienes este objeto")
+        else {
+            var valor = vendedor.mochila.lista[nObjeto].valor
+            comprador.mochila.lista.add(vendedor.mochila.lista[nObjeto])
+            vendedor.mochila.lista.removeAt(nObjeto)
+            println(valor)/*if (valor > 0) {
+                while (valor >= 100) {
+                    valor - 100
+                    vendedor.dinero[100] = +1
+                }
+                while (valor >= 25) {
+                    valor - 25
+                    vendedor.dinero[25] = +1
+                }
+                while (valor >= 10) {
+                    valor - 10
+                    vendedor.dinero[10] = +1
+                }
+                while (valor >= 5) {
+                    valor - 5
+                    vendedor.dinero[5] = +1
+                }
+                while (valor >= 1) {
+                    valor - 1
+                    vendedor.dinero[1] = +1
+                }
+                println(valor)
+            }*/
+            println("Objeto eliminado con exito")
+            println(valor)
+            println(vendedor.mochila.lista)
+            println(comprador.mochila.lista)
+        }
+    }
+
+    fun calcularMonedero(precio: Int) {
+
     }
 }
 
 
 class Mochila(var lista: MutableList<Articulo>) {
-    var W = 10
-    fun dentroM(): MutableList<Articulo>{
+    var W = Random().nextInt(1, 6) * 10
+
+    fun dentroM(): MutableList<Articulo> {
         lista.sort()
         val result = mutableListOf<Articulo>()
         var suma = 0
@@ -177,6 +226,7 @@ class Articulo(var peso: Int, var valor: Int) : Comparable<Articulo> {
         return "Articulo(peso=$peso, valor=$valor)"
     }
 }
+
 enum class Estado_vital {
     ANCIANO, ADULTO, JOVEN
 }
