@@ -1,3 +1,4 @@
+import java.lang.NumberFormatException
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -11,6 +12,8 @@ class Aventura {
     var listaArticulos = mutableListOf<Articulo>(
         Articulo(4, 45), Articulo(40, 45286457), Articulo(6, 30), Articulo(4, 50), Articulo(5, 10), Articulo(2, 40)
     )
+    var listaArticulosM = mutableListOf<Articulo>()
+    var listaJugadores = mutableListOf<Persona>()
     fun elegirRuta() {
         println(
             "Elige lo que quieres probar respecto al programa" + "\n1. Ver una prueba de que la conversación funciona sin meter parámetros" + "\n2. Ver una prueba de que el intercambio funciona sin meter parámetros" + "\n3. Ver una prueba de que el intercambio funciona metiendo parámetros"
@@ -22,40 +25,58 @@ class Aventura {
     }
 
     fun menuCompleto() {
-        var listaArticulosM = mutableListOf<Articulo>()
-        var listaJugadores = mutableListOf<Persona>()
         while (true) {
-            println("¿Quieres crear un nuevo personaje\n1. Si   2.No?")
+            println("¿Quieres crear un nuevo personaje\n1. Si   2.No")
             var elecc = readln()
             if (elecc == "1") crearPersonaje(listaJugadores, listaArticulos, listaArticulosM)
             else if (elecc == "2") break
         }
+        println("¿Quieres hacer tus propios artículos?" + "\n1. Sí    2. No")
+        var elecc = readln()
+        if (elecc == "1") {
+            listaArticulos.removeAll(listaArticulos)
+            while (true) {
+                try {
+                    println("Si quieres parar de crear objetos escribe 1")
+                    var elecc = readln()
+                    if (elecc == "1") break
+                    println("Dime el peso del objeto")
+                    var peso = readln()
+                    println("Dime el valor del objeto")
+                    var valor = readln()
+                    listaArticulos.add(Articulo(peso.toInt(), valor.toInt()))
+                } catch (e: NumberFormatException) {
+                    println("tiene que ser un numero entero")
+                }
+            }
+        }
         while (true) {
             println(
-                "¿Que quieres hacer" +
-                        "\n1. Tener una conversación" +
-                        "\n2. Vender algo" +
-                        "\n3. Acabar el programa"
+                "¿Que quieres hacer" + "\n1. Tener una conversación" + "\n2. Vender algo" + "\n3. Acabar el programa"
             )
             var elecc = readln()
-            if (elecc == "1") conversar(listaJugadores)
-            else if (elecc == "2") venderAlgo(listaJugadores)
+            if (elecc == "1") conversar()
+            else if (elecc == "2") venderAlgo()
             else if (elecc == "3") break
         }
     }
 
-    fun conversar(listaJugadores: MutableList<Persona>){
+    fun conversar() {
         println("¿Con que jugador quieres conversar?")
         var eleccJug = readln()
         while (true) {
-            println("Pregunta algo, si quieres parar escribe 1")
-            var pregunta = readln()
-            if (pregunta == "1") break
-            listaJugadores[eleccJug.toInt()].pregunta(pregunta)
+            try {
+                println("Pregunta algo, si quieres parar escribe 1")
+                var pregunta = readln()
+                if (pregunta == "1") break
+                listaJugadores[eleccJug.toInt()].pregunta(pregunta)
+            } catch (e: Exception) {
+                println("La elección de jugador tiene que ser numerica")
+            }
         }
     }
 
-    fun venderAlgo(listaJugadores: MutableList<Persona>) {
+    fun venderAlgo() {
         println("¿Que personaje vende algo?")
         var eleccV = readln()
         println("¿A que mercader?")
@@ -64,8 +85,7 @@ class Aventura {
         var nObjeto = readln()
         try {
             listaJugadores[eleccC.toInt()].vender(
-                listaJugadores[eleccV.toInt()],
-                listaJugadores[eleccC.toInt()] as Mercader, nObjeto.toInt()
+                listaJugadores[eleccV.toInt()], listaJugadores[eleccC.toInt()] as Mercader, nObjeto.toInt()
             )
             println(listaJugadores[eleccV.toInt()].dinero)
         } catch (e: Exception) {
